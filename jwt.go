@@ -5,6 +5,11 @@ import (
 	"fmt"
 )
 
+type header struct {
+	Algorithm string `json:"alg"`
+	Type      string `json:"typ"`
+}
+
 type SigningAlgorithm interface {
 	Sign(payload string) []byte
 	Name() string
@@ -29,20 +34,6 @@ func Generate(publicClaims PublicClaims, privateClaims map[string]interface{}, a
 	encSign := encodeBase64URL(sign)
 
 	return fmt.Sprintf("%s.%s.%s", encHeader, encPayload, encSign), nil
-}
-
-func merge(publicClaims PublicClaims, privateClaims map[string]interface{}) map[string]interface{} {
-	m := privateClaims
-	if m == nil {
-		m = map[string]interface{}{}
-	}
-	m["iss"] = publicClaims.Issuer
-	m["name"] = publicClaims.Name
-	m["aud"] = publicClaims.Audience
-	m["iat"] = publicClaims.IssuedAt
-	m["sub"] = publicClaims.Subject
-
-	return m
 }
 
 func generateHeader(alg SigningAlgorithm) header {
