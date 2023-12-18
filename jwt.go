@@ -5,11 +5,6 @@ import (
 	"fmt"
 )
 
-type header struct {
-	Algorithm string `json:"alg"`
-	Type      string `json:"typ"`
-}
-
 type SigningAlgorithm interface {
 	Sign(payload string) []byte
 	Name() string
@@ -34,11 +29,4 @@ func Generate(publicClaims PublicClaims, privateClaims map[string]interface{}, a
 	encSign := encodeBase64URL(sign)
 
 	return fmt.Sprintf("%s.%s.%s", encHeader, encPayload, encSign), nil
-}
-
-func generateHeader(alg SigningAlgorithm) header {
-	return header{
-		Algorithm: alg.Name(),
-		Type:      "JWT",
-	}
 }
