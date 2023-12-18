@@ -2,6 +2,7 @@ package jwt
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 )
 
@@ -14,14 +15,14 @@ func Generate(publicClaims PublicClaims, privateClaims map[string]interface{}, a
 	h := generateHeader(alg)
 	headerJSON, err := json.Marshal(&h)
 	if err != nil {
-		return "", fmt.Errorf("failed to marshal header: %w", err)
+		return "", errors.Join(GeneratingError, fmt.Errorf("failed to marshal header: %w", err))
 	}
 	encHeader := encodeBase64URL(headerJSON)
 
 	claims := merge(publicClaims, privateClaims)
 	payload, err := json.Marshal(claims)
 	if err != nil {
-		return "", fmt.Errorf("failed to marshal claims: %w", err)
+		return "", errors.Join(GeneratingError, fmt.Errorf("failed to marshal claims: %w", err))
 	}
 	encPayload := encodeBase64URL(payload)
 
